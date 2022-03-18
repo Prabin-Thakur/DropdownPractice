@@ -4,23 +4,29 @@ import classes from "./Inputs.module.css";
 const Inputs = ({ data }) => {
     const [currentStaff, setCurrentStaff] = useState("");
     const [currentId, setCurrentId] = useState("");
+    const [currentName, setCurrentName] = useState("");
 
     const filterByCurrentStaff = data.filter(el => el.staffType === currentStaff);
-
-    let name;
-    const currentInfo =  data.find(el => el._id === currentId)
-    if(currentInfo){
-        name = currentInfo.fullName
-        console.log(name)
-    }
 
     const changeCurrentStaffHandler = (event) => {
         setCurrentStaff(event.target.value);
         setCurrentId("");
     };
 
-    const changeCurrentRollId = (event) => {
+    const changeCurrentIdHandler = (event) => {
         setCurrentId(event.target.value); 
+        const currentInfo =  data.find(el => el._id === event.target.value)
+        if(currentInfo){
+           setCurrentName(currentInfo.fullName)
+        }
+    }
+
+    const changeNameHandler = (event) => {
+        setCurrentName(event.target.value)
+        const currentInfo =  data.find(el => el.fullName === event.target.value)
+        if(currentInfo){
+           setCurrentId(currentInfo._id)
+        }
     }
 
     return (
@@ -46,10 +52,10 @@ const Inputs = ({ data }) => {
                 <label htmlFor="id">
                     ID no.
                 </label>
-                <select 
-                    defaultValue='--All--'
+                <select  
                     id='id'
-                    onChange={changeCurrentRollId}
+                    value={currentId}
+                    onChange={changeCurrentIdHandler}
                 >
                     <option value="" hidden>--All--</option>
                     {filterByCurrentStaff.map(el => (
@@ -74,19 +80,17 @@ const Inputs = ({ data }) => {
             </div>
 
             <div>
-            <label htmlFor="fullName">Full Name</label>
-            <select 
-                defaultValue='--All--'
-                value = {name}
-                id='fullName'
-                onChange={(event) => console.log(data.find(el => el.fullName === event.target.value)._id)}
-            >
-               {currentStaff ? filterByCurrentStaff.map(el => (
-                   <option key={el.fullName}>{el.fullName}</option>
-               )) : <option value='' hidden>--All--</option>}
-               
-
-            </select>
+                <label htmlFor="fullName">Full Name</label>
+                <select 
+                    value = {currentName}
+                    id='fullName'
+                    onChange={changeNameHandler}
+                >
+                    <option value='' hidden>--All--</option>
+                    {filterByCurrentStaff.map(el => (
+                        <option key={el.fullName}>{el.fullName}</option>
+                    ))}
+                </select>
             </div>
         </form>
     );
